@@ -30,9 +30,10 @@ goog.require('Blockly.JavaScript');
 
 Blockly.JavaScript['string_length'] = function(block) {
   // Text value.
-  var code = Blockly.JavaScript.quote_(block.getFieldValue('TEXT'));
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+  var code = Blockly.JavaScript.quote_(block.getFieldValue('test'));
+  return [code+'dzh', Blockly.JavaScript.ORDER_ATOMIC];
 };
+
 Blockly.JavaScript['text'] = function(block) {
   // Text value.
   var code = Blockly.JavaScript.quote_(block.getFieldValue('TEXT'));
