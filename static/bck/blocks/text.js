@@ -33,13 +33,20 @@ goog.require('Blockly.Blocks');
  * Common HSV hue for all blocks in this category.
  */
 Blockly.Blocks.texts.HUE = 160;
+Blockly.Blocks['query'] = {
+  init:function () {
+    this.appendValueInput('VALUE1')
+    .setCheck('option').appendField(new Blockly.FieldLabel('query'), 'option');
+    this.setColour(160);
+  }
+};
 Blockly.Blocks['string_length'] = {
   init:function () {
     this.appendValueInput('VALUE')
       .setCheck('String')
-      .appendField(new Blockly.FieldLabel('test'), 'test');
-    this.appendValueInput('VALUE')
-      .setCheck('String').appendField(new Blockly.FieldLabel('test'), 'test');
+      .appendField(new Blockly.FieldTextInput('test'), 'test');
+    this.appendValueInput('VALUE1')
+      .setCheck('String').appendField(new Blockly.FieldTextInput('test'), 'test');
     this.setOutput(true, 'Number');
     this.setColour(160);
     this.setTooltip('Returns number of letters in the provided text.');
@@ -55,7 +62,7 @@ Blockly.Blocks['text'] = {
     this.setColour(Blockly.Blocks.texts.HUE);
     this.appendDummyInput()
       .appendField(this.newQuote_(true))
-      .appendField(new Blockly.FieldTextInput(''), 'TEXT')
+      .appendField(new Blockly.FieldLabel(''), 'TEXT')
       .appendField(this.newQuote_(false));
     this.setOutput(true, 'String');
     // Assign 'this' to a variable for use in the tooltip closure below.
@@ -298,7 +305,8 @@ Blockly.Blocks['text_isEmpty'] = {
         "type": "input_value",
         "name": "VALUE",
         "check": ['String', 'Array']
-      }],
+      },
+      ],
       "output": 'Boolean',
       "colour": Blockly.Blocks.texts.HUE,
       "tooltip": Blockly.Msg.TEXT_ISEMPTY_TOOLTIP,

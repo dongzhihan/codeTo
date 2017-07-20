@@ -8,41 +8,16 @@
         <div class="center fontName"><span>{{item.title}}</span></div>
       </div>
     </div>-->
-    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
-   
+    <div id="blocklyDiv" style="height: 480px; width: 1500px;"></div>
+
     <div v-on:click="codeTo()" style="height: 100px; width: 100px;">code to </div>
     <div>{{codeJs}}</div>
-   <xml id="toolbox" style="display: none">
-    <category name="Logic">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-    </category>
-    <category name="Loops">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_whileUntil"></block>
-    </category>
-    <category name="Math">
-      <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
-      <block type="math_single"></block>
-    </category>
-    <category name="Text">
-      <block type="text"></block>
-      <block type="string_length"></block>
-      <block type="text_length"></block>
-      <block type="text_print"></block>
-    </category>
-  </xml>
- 
+    <xml id="toolbox" style="display: none">
+
+      <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
+
+    </xml>
+
   </div>
 
 </template>
@@ -59,6 +34,7 @@
 
 </style>
 <script>
+  
   import {
     Swiper,
     SwiperItem,
@@ -67,20 +43,59 @@
     Panel,
     XButton
   } from 'vux';
-  // import api from '../js/api';
+  import api from '../js/api';
+
+
 
   export default {
     data() {
       return {
         workspace: Object,
-        codeJs: ''
+        codeJs: '',
+        bolcklys: []
       };
     },
     mounted() {
-      this.workspace = Blockly.inject('blocklyDiv', {
-        toolbox: document.getElementById('toolbox')
-      });
- 
+      var me = this;
+      async function makeModel(models) {
+        var unDuplicate = [];
+        models.map((item) => {
+          console.log($.inArray(item.TABLE_NAME, unDuplicate));
+          if ($.inArray(item.TABLE_NAME, unDuplicate) === -1) {
+            unDuplicate.push(item.TABLE_NAME);
+          }
+        });
+        console.log(unDuplicate)
+        unDuplicate.map((item) => {
+          Blockly.Blocks[item] = {
+            init: function () {
+              this.appendValueInput('VALUE')
+                .setCheck('String')
+                .appendField(new Blockly.FieldTextInput(item), 'tableName');
+              this.setColour(160);
+              this.setOutput(true, 'option');
+            }
+          };
+          Blockly.JavaScript[item] = function (block) {
+            return ['1', Blockly.JavaScript.ORDER_ATOMIC];
+          };
+          console.log()
+          console.log(Blockly.JavaScript);
+        });
+      }
+      async function query() {
+        let blocks = await me.$http.get(
+          `${api.query}?sql=select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`);
+        await makeModel(blocks.data);
+        console.log(Blockly.Blocks);
+        me.bolcklys = Blockly.Blocks;
+        setTimeout(() => {
+          me.workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox')
+          });
+        });
+      }
+      query();
       console.dir(this.workspace);
     },
     components: {
@@ -92,12 +107,18 @@
       Panel
     },
     methods: {
-      codeTo() {
+      async codeTo() {
         console.log(this.workspace);
-       Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-      var code = Blockly.JavaScript.workspaceToCode(this.workspace);
-      alert(code);
-        
+        Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+        var code = Blockly.JavaScript.workspaceToCode(this.workspace);
+ /*       code = code.split(';')[1]
+        let list = await this.$http.get(
+          `${api.query}?sql=${code}`);
+        console.log(list)*/
+        var axios=this.$http
+        console.log(api)
+        console.log(code)
+        eval(code);
       },
       goTo(item) {
         //  this.$http.post(api.xxx, data, api.config).then((data) => {

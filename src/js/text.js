@@ -23,12 +23,15 @@
  * @author fraser@google.com (Neil Fraser)
  */
 'use strict';
+
+import  axios from 'axios'
+import  api from   '../js/api'
 goog.provide('Blockly.JavaScript.texts');
 goog.require('Blockly.JavaScript');
 
 Blockly.JavaScript['query'] = function(block) {
   var tableName=block.childBlocks_[0].getFieldValue('tableName');
-  var code='  axios.get(`${api.query}?sql=select * from '+tableName+'`).then((data)=>{console.log(list.data)})'
+  var code=`axios.get('${api.query}?sql=select * from ${tableName}').then((data)=>{console.log(data.data)})`
   return [ code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
