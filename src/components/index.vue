@@ -14,8 +14,8 @@
     <div>{{codeJs}}</div>
     <xml id="toolbox" style="display: none">
 
-      <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
-
+   <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block> 
+<block   type="text_join"></block>
     </xml>
 
   </div>
@@ -34,7 +34,6 @@
 
 </style>
 <script>
-  
   import {
     Swiper,
     SwiperItem,
@@ -57,20 +56,25 @@
     },
     mounted() {
       var me = this;
+      //动态表模型
       async function makeModel(models) {
         var unDuplicate = [];
+        Blockly.tableColums=[];
         models.map((item) => {
+       
           console.log($.inArray(item.TABLE_NAME, unDuplicate));
           if ($.inArray(item.TABLE_NAME, unDuplicate) === -1) {
             unDuplicate.push(item.TABLE_NAME);
+               Blockly.tableColums[item.TABLE_NAME]=[];
           }
+             Blockly.tableColums[item.TABLE_NAME].push([item.COLUMN_NAME,item.COLUMN_NAME])
         });
         console.log(unDuplicate)
         unDuplicate.map((item) => {
           Blockly.Blocks[item] = {
             init: function () {
               this.appendValueInput('VALUE')
-                .setCheck('String')
+                .setCheck('condition')
                 .appendField(new Blockly.FieldTextInput(item), 'tableName');
               this.setColour(160);
               this.setOutput(true, 'option');
@@ -83,6 +87,7 @@
           console.log(Blockly.JavaScript);
         });
       }
+      //查询表结构
       async function query() {
         let blocks = await me.$http.get(
           `${api.query}?sql=select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`);
@@ -111,13 +116,10 @@
         console.log(this.workspace);
         Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
         var code = Blockly.JavaScript.workspaceToCode(this.workspace);
- /*       code = code.split(';')[1]
-        let list = await this.$http.get(
-          `${api.query}?sql=${code}`);
-        console.log(list)*/
-        var axios=this.$http
-        console.log(api)
-        console.log(code)
+        /*       code = code.split(';')[1]
+               let list = await this.$http.get(
+                 `${api.query}?sql=${code}`);
+               console.log(list)*/
         eval(code);
       },
       goTo(item) {

@@ -24,14 +24,27 @@
  */
 "use strict";
 
-import axios from "axios";
-import api from "../js/api";
-goog.provide("Blockly.JavaScript.texts");
+import api from "../../../js/api";
+goog.provide("Blockly.JavaScript.sql");
 goog.require("Blockly.JavaScript");
 
 Blockly.JavaScript["query"] = function(block) {
   var tableName = block.childBlocks_[0].getFieldValue("tableName");
-  var code = `axios.get('${api.query}?sql=select * from ${tableName}').then((data)=>{console.log(data.data)})`;
+  console.log(block);
+  let str=" ";
+  //后续条件
+  if (block.childBlocks_[0].childBlocks_.length > 0) {
+    let bck = block.childBlocks_[0].childBlocks_[0];
+    if (bck.type === "where_join") {
+      str=str+"where "
+      bck.childBlocks_.map(item => {
+        let whereStr=item.getFieldValue("range")+item.getFieldValue("comulms")+item.getFieldValue("opt")+"'"+item.getFieldValue("content")+"'";
+        str=str+whereStr;
+      });
+    }
+  }
+  var code = `this.$http.get("${api.query}?sql=select * from ${tableName} ${str}").then((data)=>{console.log(data.data)})`;
+  console.log(code)
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
