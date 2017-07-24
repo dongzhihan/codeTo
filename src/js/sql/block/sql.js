@@ -41,6 +41,15 @@ Blockly.Blocks["query"] = {
   }
 };
 
+Blockly.Blocks["insert"] = {
+  init: function() {
+    this.appendValueInput("VALUE1")
+      .setCheck("option")
+      .appendField(new Blockly.FieldLabel("insert"), "option");
+    this.setColour(160);
+  }
+};
+
 Blockly.Blocks["where_container"] = {
   /**
    * Mutator block for container.
@@ -79,7 +88,7 @@ Blockly.Blocks["where"] = {
       ["<", "<"],
       ["<=", "<="],
       [">=", ">="],
-      [">=", ">="]
+      [">", ">"]
     ];
     var OPERATORS_RANGE = [
       ["", ""],

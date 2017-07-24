@@ -43,7 +43,23 @@ Blockly.JavaScript["query"] = function(block) {
       });
     }
   }
-  var code = `this.$http.get("${api.query}?sql=select * from ${tableName} ${str}").then((data)=>{console.log(data.data)})`;
+  var code = `this.$http.get("${api.query}?sql=select * from ${tableName} ${str}").then(
+    (data)=>{
+      console.log(data.data)
+      let dataList=data.data;
+      let list=[];
+      dataList.map((item)=>{list.push(Object.entries(item))})
+       Blockly.Blocks["${new Date().getTime()}"] = {
+  init: function() {
+       this.appendValueInput("FIND")
+      .setCheck("String")
+      .appendField(new Blockly.FieldDropdown(list), "END");
+    this.setOutput(true, "Number");
+    this.setColour(160);
+  }
+};
+    });
+    `;
   console.log(code)
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };

@@ -1,15 +1,10 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <div id="build-wrap"></div>
   </div>
 </template>
 
 <script>
-jQuery(function($) {
-  var fbTemplate = document.getElementById('build-wrap');
-  $(fbTemplate).formBuilder();
-});
   export default {
     name: 'app',
   };

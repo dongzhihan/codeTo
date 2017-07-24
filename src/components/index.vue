@@ -14,8 +14,8 @@
     <div>{{codeJs}}</div>
     <xml id="toolbox" style="display: none">
 
-   <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block> 
-<block   type="text_join"></block>
+      <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
+      <block type="text_join"></block>
     </xml>
 
   </div>
@@ -34,14 +34,6 @@
 
 </style>
 <script>
-  import {
-    Swiper,
-    SwiperItem,
-    Selector,
-    Group,
-    Panel,
-    XButton
-  } from 'vux';
   import api from '../js/api';
 
 
@@ -59,15 +51,15 @@
       //动态表模型
       async function makeModel(models) {
         var unDuplicate = [];
-        Blockly.tableColums=[];
+        Blockly.tableColums = [];
         models.map((item) => {
-       
+
           console.log($.inArray(item.TABLE_NAME, unDuplicate));
           if ($.inArray(item.TABLE_NAME, unDuplicate) === -1) {
             unDuplicate.push(item.TABLE_NAME);
-               Blockly.tableColums[item.TABLE_NAME]=[];
+            Blockly.tableColums[item.TABLE_NAME] = [];
           }
-             Blockly.tableColums[item.TABLE_NAME].push([item.COLUMN_NAME,item.COLUMN_NAME])
+          Blockly.tableColums[item.TABLE_NAME].push([item.COLUMN_NAME, item.COLUMN_NAME])
         });
         console.log(unDuplicate)
         unDuplicate.map((item) => {
@@ -101,38 +93,32 @@
         });
       }
       query();
-      console.dir(this.workspace);
     },
     components: {
-      Selector,
-      Group,
-      XButton,
-      Swiper,
-      SwiperItem,
-      Panel
+
     },
     methods: {
       async codeTo() {
-        console.log(this.workspace);
         Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
         var code = Blockly.JavaScript.workspaceToCode(this.workspace);
-        /*       code = code.split(';')[1]
-               let list = await this.$http.get(
-                 `${api.query}?sql=${code}`);
-               console.log(list)*/
-        eval(code);
-      },
+
+        await eval(code);
+      this.bolcklys=[];
+       this.bolcklys = Blockly.Blocks;
+        console.log(this.bolcklys)
+        console.log(this.workspace)
+       
+          this.workspace = Blockly.inject('blocklyDiv', {
+            toolbox: document.getElementById('toolbox')
+          });
+       },
       goTo(item) {
-        //  this.$http.post(api.xxx, data, api.config).then((data) => {
-        // if (data.data.Errcode === 0) {
         this.$router.push({
           name: 'bedDetail',
           params: {
             id: item.id
           }
         });
-        // }
-        // });
       }
     }
   };
