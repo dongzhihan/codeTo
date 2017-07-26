@@ -62,6 +62,7 @@
           Blockly.tableColums[item.TABLE_NAME].push([item.COLUMN_NAME, item.COLUMN_NAME])
         });
         console.log(unDuplicate)
+        console.log(Blockly.FieldLabel)
         unDuplicate.map((item) => {
           Blockly.Blocks[item] = {
             init: function () {
@@ -90,6 +91,7 @@
           me.workspace = Blockly.inject('blocklyDiv', {
             toolbox: document.getElementById('toolbox')
           });
+          console.log(me.workspace);
         });
       }
       query();
@@ -97,21 +99,19 @@
     components: {
 
     },
+    watch: {
+      bolcklys() {
+        setTimeout(() => this.workspace.updateToolbox(document.getElementById('toolbox')))
+      }
+    },
     methods: {
       async codeTo() {
         Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
         var code = Blockly.JavaScript.workspaceToCode(this.workspace);
-
         await eval(code);
-      this.bolcklys=[];
-       this.bolcklys = Blockly.Blocks;
-        console.log(this.bolcklys)
-        console.log(this.workspace)
-       
-          this.workspace = Blockly.inject('blocklyDiv', {
-            toolbox: document.getElementById('toolbox')
-          });
-       },
+        this.bolcklys = [];
+        this.bolcklys = Blockly.Blocks;
+      },
       goTo(item) {
         this.$router.push({
           name: 'bedDetail',

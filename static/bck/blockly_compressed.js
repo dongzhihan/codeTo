@@ -16628,6 +16628,7 @@ Blockly.Field.prototype.setText = function(a) {
 Blockly.Field.prototype.updateTextNode_ = function() {
   if (this.textElement_) {
     var a = this.text_;
+    debugger;
     a.length > this.maxDisplayLength &&
       (a = a.substring(0, this.maxDisplayLength - 2) + "\u2026");
     goog.dom.removeChildren(this.textElement_);
@@ -16797,6 +16798,7 @@ Blockly.Tooltip.show_ = function() {
   }
 };
 Blockly.FieldLabel = function(a, b) {
+  
   this.size_ = new goog.math.Size(0, 17.5);
   this.class_ = b;
   this.setValue(a);
@@ -16804,9 +16806,13 @@ Blockly.FieldLabel = function(a, b) {
 goog.inherits(Blockly.FieldLabel, Blockly.Field);
 Blockly.FieldLabel.prototype.EDITABLE = !1;
 Blockly.FieldLabel.prototype.init = function() {
+   
+  console.log(this)
   this.textElement_ ||
     (
-      (this.textElement_ = Blockly.createSvgElement(
+    
+      (
+        this.textElement_ = Blockly.createSvgElement(
         "text",
         { class: "blocklyText", y: this.size_.height - 5 },
         null
@@ -16824,6 +16830,7 @@ Blockly.FieldLabel.prototype.dispose = function() {
   this.textElement_ = null;
 };
 Blockly.FieldLabel.prototype.getSvgRoot = function() {
+ 
   return this.textElement_;
 };
 Blockly.FieldLabel.prototype.setTooltip = function(a) {

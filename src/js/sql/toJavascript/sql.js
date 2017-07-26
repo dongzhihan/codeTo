@@ -28,18 +28,40 @@ import api from "../../../js/api";
 goog.provide("Blockly.JavaScript.sql");
 goog.require("Blockly.JavaScript");
 
+ Blockly.arrToString = arr => {
+  if (arr instanceof Array) {
+    return arr.map(item => {
+      if (typeof item === "number") {
+        return item.toString();
+      }
+      if (item instanceof Array) {
+        return  Blockly.arrToString(item);
+      }
+      return item;
+    });
+  } else {
+    throw Error("这TM不是一个数组！");
+  }
+};
+
 Blockly.JavaScript["query"] = function(block) {
   var tableName = block.childBlocks_[0].getFieldValue("tableName");
   console.log(block);
-  let str=" ";
+  let str = " ";
   //后续条件
   if (block.childBlocks_[0].childBlocks_.length > 0) {
     let bck = block.childBlocks_[0].childBlocks_[0];
     if (bck.type === "where_join") {
-      str=str+"where "
+      str = str + "where ";
       bck.childBlocks_.map(item => {
-        let whereStr=item.getFieldValue("range")+item.getFieldValue("comulms")+item.getFieldValue("opt")+"'"+item.getFieldValue("content")+"'";
-        str=str+whereStr;
+        let whereStr =
+          item.getFieldValue("range") +
+          item.getFieldValue("comulms") +
+          item.getFieldValue("opt") +
+          "'" +
+          item.getFieldValue("content") +
+          "'";
+        str = str + whereStr;
       });
     }
   }
@@ -49,6 +71,9 @@ Blockly.JavaScript["query"] = function(block) {
       let dataList=data.data;
       let list=[];
       dataList.map((item)=>{list.push(Object.entries(item))})
+      console.log(list[0])
+      list=Blockly.arrToString(list[0])
+         console.log(list)
        Blockly.Blocks["${new Date().getTime()}"] = {
   init: function() {
        this.appendValueInput("FIND")
@@ -60,7 +85,7 @@ Blockly.JavaScript["query"] = function(block) {
 };
     });
     `;
-  console.log(code)
+
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
@@ -77,6 +102,8 @@ Blockly.JavaScript["text"] = function(block) {
   var code = Blockly.JavaScript.quote_(block.getFieldValue("TEXT"));
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
+
+
 
 Blockly.JavaScript["text_join"] = function(block) {
   // Create a string made up of any number of elements of any type.

@@ -12,8 +12,14 @@ import VueRouter from "vue-router";
 import App from "./App.vue";
 import router from "./router/index";
 import ElementUI from "element-ui";
+
 import "./js/sql/toJavascript/sql"
 import "./js/sql/block/sql"
+
+ 
+
+ 
+//import "./js/sql/block/SQLBlockly.min"
 import "element-ui/lib/theme-default/index.css";
 require("babel-polyfill");
 Vue.use(ElementUI);

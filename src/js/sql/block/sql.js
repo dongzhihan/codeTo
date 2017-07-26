@@ -81,6 +81,7 @@ Blockly.Blocks["text_create_join_item"] = {
     this.contextMenu = false;
   }
 };
+ 
 Blockly.Blocks["where"] = {
   init: function() {
     var OPERATORS = [
