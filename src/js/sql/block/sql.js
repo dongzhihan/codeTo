@@ -47,8 +47,16 @@ Blockly.Blocks["insert"] = {
       .setCheck("option")
       .appendField(new Blockly.FieldLabel("insert"), "option");
     this.setColour(160);
-  }
+  },
+  setup:function()
+  {
+      console.log(1)
+  },
+        domToMutation: function (xmlElement) {
+             console.log(2)
+    },
 };
+
 
 Blockly.Blocks["where_container"] = {
   /**
