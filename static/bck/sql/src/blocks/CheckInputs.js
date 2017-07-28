@@ -880,6 +880,7 @@ function dateeval(object) {
  */
 function checkNumeric(text) {
     var exp = /^-?(\d+(\.\d{0,4})?)$/g;
+    console.log(text)
     try {
         if (text.match(exp))
             return text;

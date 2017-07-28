@@ -15,7 +15,7 @@
     <xml id="toolbox" style="display: none">
 
       <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
-      <block type="text_join"></block>
+      <block type="num"></block>
     </xml>
 
   </div>
@@ -106,9 +106,10 @@
     },
     methods: {
       async codeTo() {
-        Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-        var code = Blockly.JavaScript.workspaceToCode(this.workspace);
-        await eval(code);
+    //    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    console.dir(	SQLBlockly.SQLGen)
+        var code = 	SQLBlockly.SQLGen.workspaceToCode(this.workspace);
+        await  console.log(code);
         this.bolcklys = [];
         this.bolcklys = Blockly.Blocks;
       },
