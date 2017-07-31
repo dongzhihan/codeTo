@@ -20,12 +20,14 @@
  * @author Kirsten Schwarz, SPE Systemhaus GmbH (2013-2014)					   *
  * @author Michael Kolodziejczyk, SPE Systemhaus GmbH (since 2016)			   *
  *******************************************************************************/
- 
-var dbStructure = {};   	// Global Database Structure
-var editor = null;      	// Global SQL Code Editor variable
-var selected = null; 		// Object of the element to be moved
-var x_pos = 0, y_pos = 0; 	// Stores x & y coordinates of the mouse pointer
-var x_elem = 0, y_elem = 0; // Stores top, left values (edge) of the element
+
+var dbStructure = {}; // Global Database Structure
+var editor = null; // Global SQL Code Editor variable
+var selected = null; // Object of the element to be moved
+var x_pos = 0,
+  y_pos = 0; // Stores x & y coordinates of the mouse pointer
+var x_elem = 0,
+  y_elem = 0; // Stores top, left values (edge) of the element
 
 /**
  * Starting point of the Application. Initializing the Windows and
@@ -33,92 +35,87 @@ var x_elem = 0, y_elem = 0; // Stores top, left values (edge) of the element
  * the Blockly workspace will be initialized.
  */
 function main() {
-	var lang = new Language();
-	lang.readLanguageFile(init);
+  var lang = new Language();
+  lang.readLanguageFile(init);
 
-	/* Move/Drag behaviour */
-	document.onmousemove = _move_elem;
-	document.onmouseup = _destroy;
+  /* Move/Drag behaviour */
+  document.onmousemove = _move_elem;
+  document.onmouseup = _destroy;
 }
 
 function init() {
-	var lang = new Language();
-	lang.updateLanguageSelect();
+  var lang = new Language();
+  lang.updateLanguageSelect();
 
-	initCodeEditor();
-	initHelp();
-	initError();
-	initAddDSN();
-	initUpdateDSN();
+  initCodeEditor();
+  initHelp();
+  initError();
+  initAddDSN();
+  initUpdateDSN();
 
-	getDataSourceNames();
+  getDataSourceNames();
 }
 
 function initUpdateDSN() {
-	var updateDSNDiv = document.getElementById ('updateDSN');
-	document.getElementById ('updateDSNBar').onmousedown = function () {
-		return _drag_init (updateDSNDiv);
-	};
+  var updateDSNDiv = document.getElementById("updateDSN");
+  document.getElementById("updateDSNBar").onmousedown = function() {
+    return _drag_init(updateDSNDiv);
+  };
 }
 
 function initAddDSN() {
-	var addDSNDiv = document.getElementById ('addDSN');
-	document.getElementById ('addDSNBar').onmousedown = function () {
-		return _drag_init (addDSNDiv);
-	};
+  var addDSNDiv = document.getElementById("addDSN");
+  document.getElementById("addDSNBar").onmousedown = function() {
+    return _drag_init(addDSNDiv);
+  };
 }
 
 /**
  * Initializing Blockly.
  */
 function initBlockly() {
-	var Toolbox = Blockly.Blocks.init();
-	var blocklyDiv = document.getElementById('blocklyDiv');
-	var workspace = Blockly.inject(
-		blocklyDiv,
-		{
-			toolbox: Toolbox,
-			trashcan: true,
-			media: SQLBlockly.MEDIA_PATH,
-			zoom: {
-				controls: true,
-				wheel: true,
-				startScale: 1.0,
-				maxScale: 3,
-				minScale: 0.3,
-				scaleSpeed: 1.2
-			},
-			scrollbars: true
-		}
-	);
+  var Toolbox = Blockly.Blocks.init();
+  var blocklyDiv = document.getElementById("blocklyDiv");
+  var workspace = Blockly.inject(blocklyDiv, {
+    toolbox: Toolbox,
+    trashcan: true,
+    media: SQLBlockly.MEDIA_PATH,
+    zoom: {
+      controls: true,
+      wheel: true,
+      startScale: 1.0,
+      maxScale: 3,
+      minScale: 0.3,
+      scaleSpeed: 1.2
+    },
+    scrollbars: true
+  });
 
-	loadWorkspace();
-	workspace.addChangeListener(onchangeWorkspace);
+  loadWorkspace();
+  workspace.addChangeListener(onchangeWorkspace);
 }
 
 function onchangeWorkspace(event) {
-	saveWorkspace();
+  saveWorkspace();
 }
 
 function saveWorkspace() {
-	localStorage.setItem(
-		"tmpSQLWorkspace",
-		Blockly.Xml.domToText(
-			Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)
-		)
-	);
+  localStorage.setItem(
+    "tmpSQLWorkspace",
+    Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace))
+  );
 }
 
 function loadWorkspace() {
-	var tmpWorkspace = localStorage.getItem("tmpSQLWorkspace");
-	if (tmpWorkspace) {
-		Blockly.Xml.domToWorkspace(
-			Blockly.Xml.textToDom(tmpWorkspace),
-			Blockly.mainWorkspace
-		);
+  var tmpWorkspace = localStorage.getItem("tmpSQLWorkspace");
+  if (tmpWorkspace) {
+    Blockly.Xml.domToWorkspace(
+      Blockly.Xml.textToDom(tmpWorkspace),
+      Blockly.mainWorkspace
+    );
 
-		Blockly.mainWorkspace.render();
-	}
+    Blockly.mainWorkspace.render();
+  }
 }
 
 /**
@@ -127,59 +124,59 @@ function loadWorkspace() {
  * @param {DOMNode} elem Element that should be dragable.
  * @return {boolean} false
  */
-function _drag_init (elem) {
-	// Store the object of the element which needs to be moved
-	selected = elem;
-	x_elem = x_pos - selected.offsetLeft;
-	y_elem = y_pos - selected.offsetTop;
+function _drag_init(elem) {
+  // Store the object of the element which needs to be moved
+  selected = elem;
+  x_elem = x_pos - selected.offsetLeft;
+  y_elem = y_pos - selected.offsetTop;
 
-	return false;
+  return false;
 }
 
 /** 
  * Will be called when user dragging an element 
  */
-function _move_elem (e) {
-	x_pos = document.all ? window.event.clientX : e.pageX;
-	y_pos = document.all ? window.event.clientY : e.pageY;
+function _move_elem(e) {
+  x_pos = document.all ? window.event.clientX : e.pageX;
+  y_pos = document.all ? window.event.clientY : e.pageY;
 
-	if (selected != null) {
-		selected.style.left = (x_pos - x_elem) + 'px';
-		selected.style.top = (y_pos - y_elem) + 'px';
-	}
+  if (selected != null) {
+    selected.style.left = x_pos - x_elem + "px";
+    selected.style.top = y_pos - y_elem + "px";
+  }
 }
 
 /** 
  * Destroy the selected movable object when we are done.
  */
-function _destroy () {
-	selected = null;
+function _destroy() {
+  selected = null;
 }
 
 /**
  * Init movable help container.
  */
 function initHelp() {
-	var helpDiv = document.getElementById ('help');
-	helpDiv.style.height = "0px";
-	
-	document.getElementById("sqlHelpBar").onmousedown = function () {
-		return _drag_init (helpDiv);
-	};
+  var helpDiv = document.getElementById("help");
+  helpDiv.style.height = "0px";
 
-	document.getElementById ("helpcontent").onmousedown = function () {
-		return _drag_init (helpDiv);
-	};
+  document.getElementById("sqlHelpBar").onmousedown = function() {
+    return _drag_init(helpDiv);
+  };
+
+  document.getElementById("helpcontent").onmousedown = function() {
+    return _drag_init(helpDiv);
+  };
 }
 
 /**
  * Initializing movable error container.
  */
 function initError() {
-	var errorDiv = document.getElementById ('errorSQL');
-	document.getElementById ('sqlErrorBar').onmousedown = function () {
-		return _drag_init (errorDiv);
-	};
+  var errorDiv = document.getElementById("errorSQL");
+  document.getElementById("sqlErrorBar").onmousedown = function() {
+    return _drag_init(errorDiv);
+  };
 }
 
 /**
@@ -187,18 +184,18 @@ function initError() {
  * the sqlStatement TextArea. Making this area movable.
  */
 function initCodeEditor() {
-	editor = ace.edit("sqlStatement");
-	editor.setTheme("ace/theme/monokai");
-	editor.getSession().setMode("ace/mode/sql");
-	editor.setHighlightActiveLine(false);
-	editor.getSession().setUseWrapMode(true);
-	editor.$blockScrolling = Infinity;
+  editor = ace.edit("sqlStatement");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/sql");
+  editor.setHighlightActiveLine(false);
+  editor.getSession().setUseWrapMode(true);
+  editor.$blockScrolling = Infinity;
 
-	var sqlArea = document.getElementById("writeSQL")
-	var sqlEditorBar = document.getElementById("sqlEditorBar");
-	sqlEditorBar.onmousedown = function () {
-		return _drag_init (sqlArea);
-	};
+  var sqlArea = document.getElementById("writeSQL");
+  var sqlEditorBar = document.getElementById("sqlEditorBar");
+  sqlEditorBar.onmousedown = function() {
+    return _drag_init(sqlArea);
+  };
 }
 
 /**
@@ -214,11 +211,11 @@ function parsingSQL() {
 
   try {
     parser.parse(sqlStatement);
-	showNotification(SQLBlocks.Msg.User.WORKSPACE_UPDATED, 2);
+    showNotification(SQLBlocks.Msg.User.WORKSPACE_UPDATED, 2);
   } catch (e) {
-	Blockly.Xml.domToWorkspace(tmpWorkspace, currentWorkspace);
-	openErrorBox(e.message);
-	console.error(e);
+    Blockly.Xml.domToWorkspace(tmpWorkspace, currentWorkspace);
+    openErrorBox(e.message);
+    console.error(e);
   }
 }
 
@@ -226,24 +223,24 @@ function parsingSQL() {
  * Show Error Box window.
  */
 function openErrorBox(errorMessage) {
-	document.getElementById("errorSQL").style.display = "block";
-	document.getElementById("sqlErrorMessage").value = errorMessage;
+  document.getElementById("errorSQL").style.display = "block";
+  document.getElementById("sqlErrorMessage").value = errorMessage;
 }
 
 /**
  * Closing Error Box window.
  */
 function closeErrorBox() {
-	document.getElementById("errorSQL").style.display = "none";
-	document.getElementById("sqlErrorMessage").value = "";
+  document.getElementById("errorSQL").style.display = "none";
+  document.getElementById("sqlErrorMessage").value = "";
 }
 
 /**
  * Showing the SQL-statement text
  */
 function editStatement() {
-	generateSQLCode();
-	openCodeEditor();
+  generateSQLCode();
+  openCodeEditor();
 }
 
 /**
@@ -251,179 +248,171 @@ function editStatement() {
  * the Code Editor window.
  */
 function generateSQLCode() {
-	var code = SQLBlockly.SQLGen.workspaceToCode(Blockly.mainWorkspace);
-	if (code.length === 1 && code === ";")
-		code = "";
+  var code = SQLBlockly.SQLGen.workspaceToCode(Blockly.mainWorkspace);
+  if (code.length === 1 && code === ";") code = "";
 
-	editor.setValue(code);
+  editor.setValue(code);
 }
 
 /**
  * Open the Code Editor window.
  */
 function openCodeEditor() {
-	document.getElementById('writeSQL').style.display = "block";
+  document.getElementById("writeSQL").style.display = "block";
 }
 
 /**
  * Closing Code Editor window.
  */
 function closeCodeEditor() {
-	document.getElementById("writeSQL").style.display = "none";	
+  document.getElementById("writeSQL").style.display = "none";
 }
 
 /**
  * Closing all Popup windows on the workspace.
  */
 function closeAllPopups() {
-	closeCodeEditor();
-	closeHelp();
-	closeTooltip();
-	closeErrorBox();
-	closeUpdateDataSource();
-	closeAddDataSource();
+  closeCodeEditor();
+  closeHelp();
+  closeTooltip();
+  closeErrorBox();
+  closeUpdateDataSource();
+  closeAddDataSource();
 }
 
 /**
  * Closes the help div
  */
 function closeHelp() {
-	var help = document.getElementById('help');
-	help.style.display = "none";
+  var help = document.getElementById("help");
+  help.style.display = "none";
 }
 
 function openUpdateDataSource() {
-	document.getElementById("updateDSN").style.display = "block";
+  document.getElementById("updateDSN").style.display = "block";
 }
 
 function closeUpdateDataSource() {
-	document.getElementById("updateDSN").style.display = "none";
+  document.getElementById("updateDSN").style.display = "none";
 }
 
 function openAddDataSource() {
-	document.getElementById("addDSN").style.display = "block";	
+  document.getElementById("addDSN").style.display = "block";
 }
 
 function closeAddDataSource() {
-	document.getElementById("addDSN").style.display = "none";
+  document.getElementById("addDSN").style.display = "none";
 }
 
 /**
  * Setting the textarea tooltip
  */
 function setTooltip() {
-	var a = document.getElementById('tooltip');
-	a.innerHTML = SQLBlocks.Msg.User.TOOLTIP_SQL_BOX;
-	a.style.display = 'block';
+  var a = document.getElementById("tooltip");
+  a.innerHTML = SQLBlocks.Msg.User.TOOLTIP_SQL_BOX;
+  a.style.display = "block";
 }
 
 /**
  * Closing the textarea tooltip
  */
 function closeTooltip() {
-	var a = document.getElementById('tooltip');
-	a.innerHTML = "";
-	a.style.display = 'none';
+  var a = document.getElementById("tooltip");
+  a.innerHTML = "";
+  a.style.display = "none";
 }
 
 function addDataSource(data) {
-	var form = document.getElementById("addDSNForm");
-	var xhr = new XMLHttpRequest();
-	var formData = null;
+  var form = document.getElementById("addDSNForm");
+  var xhr = new XMLHttpRequest();
+  var formData = null;
 
-	if (!data)
-		formData = new FormData(form);
-	else
-		formData = data;
+  if (!data) formData = new FormData(form);
+  else formData = data;
 
-	xhr.open("POST", "backend/addDataSource.php", true);
-	xhr.responseType = "json";
-	xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-			if (this.response[0].code === 0) {
-				getDataSourceNames();
-				closeAddDataSource();
-				closeUpdateDataSource();
-			} else 
-				openErrorBox(JSON.stringify(this.response));			
-		}
-	};
+  xhr.open("POST", "backend/addDataSource.php", true);
+  xhr.responseType = "json";
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      if (this.response[0].code === 0) {
+        getDataSourceNames();
+        closeAddDataSource();
+        closeUpdateDataSource();
+      } else openErrorBox(JSON.stringify(this.response));
+    }
+  };
 
-    xhr.send(formData);
+  xhr.send(formData);
 }
 
 function updateDataSource() {
-	var dsn = document.getElementById("dataSourceNames").value;
-	var data = new FormData(document.getElementById("updateDSNForm"));
-	data.append("dsn", dsn);
+  var dsn = document.getElementById("dataSourceNames").value;
+  var data = new FormData(document.getElementById("updateDSNForm"));
+  data.append("dsn", dsn);
 
-	addDataSource(data);
+  addDataSource(data);
 }
 
 function removeDataSource() {
-	var load = confirm(SQLBlocks.Msg.User.CONFIRM_DELETE_DSN);
-	if (!load)
-		return false;
+  var load = confirm(SQLBlocks.Msg.User.CONFIRM_DELETE_DSN);
+  if (!load) return false;
 
-	var select = document.getElementById("dataSourceNames");
-	var dsn = select.value;
-	var xhr = new XMLHttpRequest();
+  var select = document.getElementById("dataSourceNames");
+  var dsn = select.value;
+  var xhr = new XMLHttpRequest();
 
-	xhr.open("GET", "backend/removeDataSource.php?dsn=" + dsn, true);
-	xhr.responseType = "json"; 
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState === 4 && xhr.status === 200) {
-			if (xhr.response.code === 0) {
-				getDataSourceNames();
-				showNotification(dsn + SQLBlocks.Msg.User.DSN_DELETED, 2);
-			}
-		}
-		
-		if (xhr.status != 200)
-			openErrorBox(JSON.stringify(xhr.response));	
-    };
+  xhr.open("GET", "backend/removeDataSource.php?dsn=" + dsn, true);
+  xhr.responseType = "json";
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      if (xhr.response.code === 0) {
+        getDataSourceNames();
+        showNotification(dsn + SQLBlocks.Msg.User.DSN_DELETED, 2);
+      }
+    }
 
-    xhr.send();
+    if (xhr.status != 200) openErrorBox(JSON.stringify(xhr.response));
+  };
+
+  xhr.send();
 }
 
 function getDataSourceNames() {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "backend/getDataSources.php", true);
-	xhr.responseType = "json"; 
-	xhr.onload = function() {
-        if (xhr.status == 200)
-			updateDataSourceNames(xhr.response);
-		else
-			openErrorBox(JSON.stringify(xhr.response));			
-    };
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "backend/getDataSources.php", true);
+  xhr.responseType = "json";
+  xhr.onload = function() {
+    if (xhr.status == 200) updateDataSourceNames(xhr.response);
+    else openErrorBox(JSON.stringify(xhr.response));
+  };
 
-    xhr.send();
+  xhr.send();
 }
 
 function updateDataSourceNames(dataSourceNames) {
-	var select = document.getElementById("dataSourceNames");
-	var first = true;
+  var select = document.getElementById("dataSourceNames");
+  var first = true;
 
-	/* Clearing old entries */
-	while(select.firstChild) {
-		select.removeChild(select.firstChild);
-	}
-	
-	for (var dsnKey in dataSourceNames) {
-		var dsn = dataSourceNames[dsnKey];
-		var option = document.createElement("option");
-		option.value = dsn;
-		option.innerHTML = dsn;
-		
-		select.appendChild(option);
+  /* Clearing old entries */
+  while (select.firstChild) {
+    select.removeChild(select.firstChild);
+  }
 
-		if (first) {
-			SQLBlockly.DSN = dsn;
-			first = false;
-		}
-	}
+  for (var dsnKey in dataSourceNames) {
+    var dsn = dataSourceNames[dsnKey];
+    var option = document.createElement("option");
+    option.value = dsn;
+    option.innerHTML = dsn;
 
-	getDBStructure();
+    select.appendChild(option);
+
+    if (first) {
+      SQLBlockly.DSN = dsn;
+      first = false;
+    }
+  }
+
+  getDBStructure();
 }
 
 /**
@@ -433,53 +422,104 @@ function updateDataSourceNames(dataSourceNames) {
  * @param {String} dsn Data Source Name of the ODBC connection.
  */
 function loadDatabaseStructure(select) {
-	var load = true;
-	if (Blockly.mainWorkspace)
-		load = confirm(SQLBlocks.Msg.User.CONFIRM_LOAD_WORKSPACE);
+  var load = true;
+  if (Blockly.mainWorkspace)
+    load = confirm(SQLBlocks.Msg.User.CONFIRM_LOAD_WORKSPACE);
 
-	if (!load) {
-		select.value = SQLBlockly.DSN;
-		return false;
-	}
+  if (!load) {
+    select.value = SQLBlockly.DSN;
+    return false;
+  }
 
-	SQLBlockly.DSN = select.value;
-	getDBStructure();
+  SQLBlockly.DSN = select.value;
+  getDBStructure();
 }
 
+dbStructure = {
+  current_dept_emp: [
+    { name: "emp_no", type: "INT" },
+    { name: "dept_no", type: "CHAR" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ],
+  departments: [
+    { name: "dept_no", type: "CHAR" },
+    { name: "dept_name", type: "VARCHAR" }
+  ],
+  dept_emp: [
+    { name: "emp_no", type: "INT" },
+    { name: "dept_no", type: "CHAR" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ],
+  dept_emp_latest_date: [
+    { name: "emp_no", type: "INT" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ],
+  dept_manager: [
+    { name: "emp_no", type: "INT" },
+    { name: "dept_no", type: "CHAR" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ],
+  employees: [
+    { name: "emp_no", type: "INT" },
+    { name: "birth_date", type: "DATE" },
+    { name: "first_name", type: "VARCHAR" },
+    { name: "last_name", type: "VARCHAR" },
+    { name: "gender", type: "ENUM" },
+    { name: "hire_date", type: "DATE" }
+  ],
+  salaries: [
+    { name: "emp_no", type: "INT" },
+    { name: "salary", type: "INT" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ],
+  titles: [
+    { name: "emp_no", type: "INT" },
+    { name: "title", type: "VARCHAR" },
+    { name: "from_date", type: "DATE" },
+    { name: "to_date", type: "DATE" }
+  ]
+};
+console.log(dbStructure);
 function getDBStructure() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "databases/" + SQLBlockly.DSN + ".json", true);
-    xhr.responseType = "json";
-    xhr.onload = function() {
-        var status = xhr.status;
-        if (status == 200) {
-			dbStructure = xhr.response;
-			initBlockly();
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "databases/" + SQLBlockly.DSN + ".json", true);
+  xhr.responseType = "json";
+  xhr.onload = function() {
+    var status = xhr.status;
+    if (status == 200) {
+      dbStructure = xhr.response;
+      initBlockly();
 
-			showNotification(SQLBlocks.Msg.User.WORKSPACE_UPDATED, 2);
-        }
-    };
+      showNotification(SQLBlocks.Msg.User.WORKSPACE_UPDATED, 2);
+    }
+  };
 
-    xhr.send();
+  xhr.send();
 }
 
 function showNotification(message, time) {
-	var notifications = document.getElementById("notifications");
-	notifications.innerHTML = message;
-	notifications.style.visibility = "visible";
-	notifications.style.opacity = 1;
-	notifications.style.transition = "opacity " + time + "s linear";
+  var notifications = document.getElementById("notifications");
+  notifications.innerHTML = message;
+  notifications.style.visibility = "visible";
+  notifications.style.opacity = 1;
+  notifications.style.transition = "opacity " + time + "s linear";
 
-	setTimeout(function() {
-		hideNotification(time);
-	}, time * 1000);
+  setTimeout(function() {
+    hideNotification(time);
+  }, time * 1000);
 }
 
 function hideNotification(time) {
-	var notifications = document.getElementById("notifications");
-	notifications.style.visibility = "hidden";
-	notifications.style.opacity = 0;
-	notifications.style.transition = "visibility 0s " + time + "s, opacity " + time + "s linear";
+  var notifications = document.getElementById("notifications");
+  notifications.style.visibility = "hidden";
+  notifications.style.opacity = 0;
+  notifications.style.transition =
+    "visibility 0s " + time + "s, opacity " + time + "s linear";
 }
 
 /**
@@ -489,7 +529,7 @@ function hideNotification(time) {
  * @return {Array} tables All tables that 
  */
 function getTablesArrayFromStructure() {
-    return Object.keys(dbStructure);
+  return Object.keys(dbStructure);
 }
 
 /**
@@ -500,6 +540,5 @@ function getTablesArrayFromStructure() {
  * @return {Array} columns All columns that are in the table.
  */
 function getColumnsArrayFromStructure(tableName) {
-    return dbStructure[tableName];
+  return dbStructure[tableName];
 }
- 
