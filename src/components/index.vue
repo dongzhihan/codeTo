@@ -15,7 +15,7 @@
     <xml id="toolbox" style="display: none">
 
       <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
-      <block type="num"></block>
+      <block type="variable"></block>
     </xml>
 
   </div>

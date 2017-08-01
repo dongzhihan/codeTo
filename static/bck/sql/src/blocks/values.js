@@ -6,6 +6,37 @@
  *                                                                                        
  ******************************************************************************/
 
+
+ Blockly.Blocks['variable'] = {
+    /**
+     * Initialization of the string block.
+     * Sets color, helpUrl, inputs, outputs and the tooltip of this block.
+     *
+     * @method init
+     * @this Blockly.Block
+     */
+    init: function () {
+        this.setHelpUrl(this.type);
+        this.setColour(SQLBlockly.Colours.string);
+        this.appendDummyInput("string")
+            .setAlign(Blockly.ALIGN_LEFT)
+            .appendField(new Blockly.FieldTextInput(""), "String");
+        this.setTooltip(SQLBlocks.Msg.Tooltips.STRING);
+    },
+    /*
+     * onchange sets the colour of a specified parent
+     *
+     * @method:onchnage
+     * @this Blockly.Block
+     */
+    onchange: function () {
+        if (!this.workspace)
+            return;
+
+        sqlHelp.colourTheParent(this);
+    }
+};
+ 
 Blockly.Blocks['array'] = {
   /**
    * Block for creating a list with any number of elements of any type.
