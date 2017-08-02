@@ -16,6 +16,7 @@
 
       <block v-for="(value, key) in bolcklys" :key="key" :type="key"></block>
       <block type="variable"></block>
+      <block type="compare_operator"></block>
     </xml>
 
   </div>
@@ -106,12 +107,14 @@
     },
     methods: {
       async codeTo() {
-    //    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-    console.dir(	SQLBlockly.SQLGen)
-        var code = 	SQLBlockly.SQLGen.workspaceToCode(this.workspace);
-        await  console.log(code);
-        this.bolcklys = [];
-        this.bolcklys = Blockly.Blocks;
+        //    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+        console.dir(SQLBlockly.SQLGen)
+        console.log(SQLBlockly.SQLGen.workspaceToCode)
+        var code = SQLBlockly.SQLGen.workspaceToCode(this.workspace);
+        console.log(code)
+        await eval(code)
+ 
+
       },
       goTo(item) {
         this.$router.push({

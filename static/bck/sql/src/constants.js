@@ -16,6 +16,3 @@ SQLBlockly.Colours.date = "#A55B80";
 SQLBlockly.Colours.undefined = "#000000";
 SQLBlockly.Colours.mutators = "#63A65A";
 window.SQLBlockly=SQLBlockly;
-
-console.log(window.SQLBlockly)
-console.log(window)

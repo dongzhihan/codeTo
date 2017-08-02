@@ -26,6 +26,7 @@ Blockly.Blocks["select"] = {
     this.setHelpUrl(this.type);
     this.setColour(SQLBlockly.Colours.list);
     this.gradient = new ColourGradient();
+    this.setOutput("variable",true);
     this.appendDummyInput("dummy_variable");
     this.appendStatementInput("select")
       .appendField(SQLBlocks.Msg.Blocks.SELECT)

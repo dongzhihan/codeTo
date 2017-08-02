@@ -7,6 +7,14 @@ window.BlocklyPlugins = window.BlocklyPlugins || {};
     return [block.getField("NUM").getValue(), 1];
   };
 
+  SQLBlockly.SQLGen.variable = function(block) {
+    
+    return [
+      ` window.${ block.getField("name").getValue()}= \`${SQLBlockly.SQLGen.statementToCode(block, "SQL", 1)}\` `,
+      1
+    ];
+  };
+
   SQLBlockly.SQLGen.string = function(block) {
     return ["'" + block.getField("String").getValue() + "'", 1];
   };

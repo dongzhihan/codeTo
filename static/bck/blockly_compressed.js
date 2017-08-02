@@ -22985,6 +22985,7 @@ Blockly.Generator.prototype.workspaceToCode = function(a) {
   b = this.finish(b);
   b = b.replace(/^\s+\n/, "");
   b = b.replace(/\n\s+$/, "\n");
+  debugger;
   return (b = b.replace(/[ \t]+\n/g, "\n"));
 };
 Blockly.Generator.prototype.prefixLines = function(a, b) {
@@ -23053,6 +23054,7 @@ Blockly.Generator.prototype.valueToCode = function(a, b, c) {
 Blockly.Generator.prototype.statementToCode = function(a, b) {
   var c = a.getInputTargetBlock(b),
     d = this.blockToCode(c);
+    console.log(this)
   goog.asserts.assertString(
     d,
     'Expecting code from statement block "%s".',

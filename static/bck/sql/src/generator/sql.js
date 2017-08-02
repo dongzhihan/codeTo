@@ -86,7 +86,7 @@
 	  // Clean up temporary data.
 	  SQLBlockly.SQLGen.variableDB_.reset();
 	  
-	  return code.trim() + ";";
+	  return code.trim() ;
 	};
 
 	/**
