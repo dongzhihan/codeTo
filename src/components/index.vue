@@ -77,14 +77,13 @@
           Blockly.JavaScript[item] = function (block) {
             return ['1', Blockly.JavaScript.ORDER_ATOMIC];
           };
-          console.log()
           console.log(Blockly.JavaScript);
         });
       }
       //查询表结构
       async function query() {
         let blocks = await me.$http.get(
-          `${api.query}?sql=select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`);
+          `${api.query}`,{params:{sql:`select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`}});
         await makeModel(blocks.data);
         console.log(Blockly.Blocks);
         me.bolcklys = Blockly.Blocks;

@@ -26,10 +26,8 @@ window.BlocklyPlugins = window.BlocklyPlugins || {};
   SQLBlockly.SQLGen.fieldname_get = function(block) {
     var code = "AS ";
     var name = block.getField("VAR");
-
     if (name) code += name.getValue();
     else code = "";
-
     return code;
   };
 
