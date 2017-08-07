@@ -8,9 +8,16 @@ window.BlocklyPlugins = window.BlocklyPlugins || {};
   };
 
   SQLBlockly.SQLGen.variable = function(block) {
-    
+
     return [
-      ` window.${ block.getField("name").getValue()}= \`${SQLBlockly.SQLGen.statementToCode(block, "SQL", 1)}\` `,
+      ` (async  ()=>
+      {
+       codeVar.${ block.getField("name").getValue()} =  await db.query(\`${SQLBlockly.SQLGen.statementToCode(block, "SQL", 1)}\`, {
+     type: Sequelize.QueryTypes.SELECT
+    }); 
+         console.log(codeVar)
+         
+        })();`,
       1
     ];
   };
@@ -56,7 +63,6 @@ window.BlocklyPlugins = window.BlocklyPlugins || {};
             code += "'" + target.getField("Date_").getValue() + "'";
             break;
         }
-
         code += ", ";
       }
     }

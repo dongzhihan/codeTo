@@ -54,6 +54,20 @@
         var unDuplicate = [];
         Blockly.tableColums = [];
         models.map((item) => {
+          if (!(item.TABLE_NAME in window.dbStructure)) {
+            window.dbStructure[item.TABLE_NAME] =[ {
+              name: item.COLUMN_NAME,
+              type: item.DATA_TYPE
+            }];
+          } else {
+            window.dbStructure[item.TABLE_NAME].push({
+              name: item.COLUMN_NAME,
+              type: item.DATA_TYPE
+            });
+          }
+
+
+
 
           console.log($.inArray(item.TABLE_NAME, unDuplicate));
           if ($.inArray(item.TABLE_NAME, unDuplicate) === -1) {
@@ -62,8 +76,6 @@
           }
           Blockly.tableColums[item.TABLE_NAME].push([item.COLUMN_NAME, item.COLUMN_NAME])
         });
-        console.log(unDuplicate)
-        console.log(Blockly.FieldLabel)
         unDuplicate.map((item) => {
           Blockly.Blocks[item] = {
             init: function () {
@@ -83,8 +95,13 @@
       //查询表结构
       async function query() {
         let blocks = await me.$http.get(
-          `${api.query}`,{params:{sql:`select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`}});
+          `${api.query}`, {
+            params: {
+              sql: `select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`
+            }
+          });
         await makeModel(blocks.data);
+
         console.log(Blockly.Blocks);
         me.bolcklys = Blockly.Blocks;
         setTimeout(() => {
@@ -111,9 +128,12 @@
         console.log(SQLBlockly.SQLGen.workspaceToCode)
         var code = SQLBlockly.SQLGen.workspaceToCode(this.workspace);
         console.log(code)
-        await eval(code)
- 
-
+           let blocks = await this.$http.get(
+          `${api.code}`, {
+            params: {
+              code: code
+            }
+          });
       },
       goTo(item) {
         this.$router.push({
