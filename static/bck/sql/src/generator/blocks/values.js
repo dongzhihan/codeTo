@@ -14,9 +14,8 @@ window.BlocklyPlugins = window.BlocklyPlugins || {};
       {
        codeVar.${ block.getField("name").getValue()} =  await db.query(\`${SQLBlockly.SQLGen.statementToCode(block, "SQL", 1)}\`, {
      type: Sequelize.QueryTypes.SELECT
-    }); 
+    });
          console.log(codeVar)
-         
         })();`,
       1
     ];

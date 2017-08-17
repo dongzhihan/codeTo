@@ -25,6 +25,7 @@ const api = {
     };
   },
   query: "http://127.0.0.1:3000/query",
-   code: "http://127.0.0.1:3000/code"
+  code: "http://127.0.0.1:3000/code",
+  workspace: "http://127.0.0.1:3000/workspace"
 }; // //////////api存放位置
 export default api;

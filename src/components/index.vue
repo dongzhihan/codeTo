@@ -55,7 +55,7 @@
         Blockly.tableColums = [];
         models.map((item) => {
           if (!(item.TABLE_NAME in window.dbStructure)) {
-            window.dbStructure[item.TABLE_NAME] =[ {
+            window.dbStructure[item.TABLE_NAME] = [{
               name: item.COLUMN_NAME,
               type: item.DATA_TYPE
             }];
@@ -122,17 +122,54 @@
       }
     },
     methods: {
+
+      xmlToJson(xml) {
+        // Create the return object
+        var obj = {};
+        if (xml.nodeType == 1) { // element
+          // do attributes
+          if (xml.attributes.length > 0) {
+            obj["@attributes"] = {};
+            for (var j = 0; j < xml.attributes.length; j++) {
+              var attribute = xml.attributes.item(j);
+              obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+            }
+          }
+        } else if (xml.nodeType == 3) { // text
+          obj = xml.nodeValue;
+        }
+        // do children
+        if (xml.hasChildNodes()) {
+          for (var i = 0; i < xml.childNodes.length; i++) {
+            var item = xml.childNodes.item(i);
+            var nodeName = item.nodeName;
+            if (typeof (obj[nodeName]) == "undefined") {
+              obj[nodeName] = this.xmlToJson(item);
+            } else {
+              if (typeof (obj[nodeName].length) == "undefined") {
+                var old = obj[nodeName];
+                obj[nodeName] = [];
+                obj[nodeName].push(old);
+              }
+              obj[nodeName].push(this.xmlToJson(item));
+            }
+          }
+        }
+        return obj;
+      },
       async codeTo() {
         //    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-        console.dir(SQLBlockly.SQLGen)
-        console.log(SQLBlockly.SQLGen.workspaceToCode)
-        var code = SQLBlockly.SQLGen.workspaceToCode(this.workspace);
-        console.log(code)
-           let blocks = await this.$http.get(
-          `${api.code}`, {
-            params: {
-              code: code
-            }
+
+        // var oSerializer = new XMLSerializer();
+        // var sXML = oSerializer.serializeToString(Blockly.Xml.workspaceToDom(this.workspace)); //xml to  string
+        console.log(this)
+        console.log(Blockly.Xml.workspaceToDom(this.workspace))
+        //var sXML = this.xmlToJson(Blockly.Xml.workspaceToDom(this.workspace));
+        var sXML = Blockly.Xml.workspaceToDom(this.workspace);
+        var text = Blockly.Xml.domToText(sXML);
+        let blocks = await this.$http.post(
+          `${api.workspace}`, {
+            workspace: text
           });
       },
       goTo(item) {
