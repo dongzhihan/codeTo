@@ -94,7 +94,7 @@
         let blocks = await me.$http.get(
           `${api.query}`, {
             params: {
-              sql: `select * from information_schema.columns where  TABLE_SCHEMA='dzhupupup'`
+              sql: `select * from information_schema.columns where  TABLE_SCHEMA='test'`
             }
           });
         await makeModel(blocks.data);
@@ -130,11 +130,11 @@
         //var sXML = this.xmlToJson(Blockly.Xml.workspaceToDom(this.workspace));
         var sXML = Blockly.Xml.workspaceToDom(this.workspace);
         var text = Blockly.Xml.domToText(sXML);
-        let blocks = await this.$http.post(
+/*         let blocks = await this.$http.post(
           `${api.workspace}`, {
             dbStructure:dbStructure,
             workspace: text
-          });
+          }); */
       },
       goTo(item) {
         this.$router.push({
